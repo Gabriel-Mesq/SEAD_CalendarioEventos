@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+# Backend specific
+backend/.env
+backend/venv/
+backend/*.log
+backend/alembic/versions/*.py
+!backend/alembic/versions/.gitkeep
+
 # Distribution / packaging
 .Python
 build/
