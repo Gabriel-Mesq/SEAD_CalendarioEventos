@@ -41,20 +41,32 @@ export const MONTHS = [
 export type Month = typeof MONTHS[number];
 
 export const UNIDADES = [
-  'SEAD - Secretaria de Administração',
-  'SEGOV - Secretaria de Governo',
-  'SEFAZ - Secretaria da Fazenda',
-  'SEPLAN - Secretaria de Planejamento',
-  'SECULT - Secretaria de Cultura',
-  'SEDUC - Secretaria de Educação',
-  'SESAU - Secretaria de Saúde',
-  'SEINFRA - Secretaria de Infraestrutura',
-  'SEAGRI - Secretaria de Agricultura',
-  'SEMAS - Secretaria de Meio Ambiente',
-  'SEJUS - Secretaria de Justiça',
-  'SETASS - Secretaria de Trabalho e Assistência Social',
-  'SETUR - Secretaria de Turismo',
-  'SESP - Secretaria de Segurança Pública'
+  // Subsecretaria de Gestão e Desenvolvimento de Pessoas
+  'Subsecretaria de Gestão e Desenvolvimento de Pessoas',
+  'Superintendência Central de Desenvolvimento Estratégico de Pessoal',
+  'Superintendência Central de Gestão de Pessoal',
+  'Superintendência de Recrutamento e Seleção',
+  
+  // Subsecretaria de Inovação da Gestão e dos Serviços Públicos
+  'Subsecretaria de Inovação da Gestão e dos Serviços Públicos',
+  'Superintendência Central de Transformação Pública',
+  'Superintendência de Inovação da Gestão Pública',
+  'Superintendência da Gestão do Atendimento ao Cidadão',
+  
+  // Subsecretaria de Logística e Patrimônio
+  'Subsecretaria de Logística e Patrimônio',
+  'Superintendência Central do Patrimônio Imobiliário',
+  'Superintendência Central de Logística e Patrimônio Mobiliário',
+  'Superintendência Central de Compras e Contratos',
+  
+  // Diretorias Executivas
+  'Diretoria Executiva da Liquidação de Estatais',
+  'Diretoria Executiva de Saúde e Segurança do Servidor',
+  'Diretoria Executiva da Escola de Governo',
+  
+  // Superintendências
+  'Superintendência de Gestão Integrada',
+  'Superintendência de Sistemas de Informação'
 ] as const;
 
 export type Unidade = typeof UNIDADES[number];
