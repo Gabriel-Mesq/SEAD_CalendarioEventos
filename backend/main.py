@@ -1,74 +1,41 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from contextlib import asynccontextmanager
-import uvicorn
+from sqlmodel import SQLModel
 
-from config import settings
-from database import create_db_and_tables
-import routes
+from db import engine
+from routers import evento, unidade
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Gerencia o ciclo de vida da aplicação"""
-    # Startup
-    print("🚀 Iniciando aplicação...")
-    create_db_and_tables()
-    print("✅ Tabelas do banco de dados criadas/verificadas")
-    yield
-    # Shutdown
-    print("🔄 Encerrando aplicação...")
+# Criar tabelas no banco
+SQLModel.metadata.create_all(engine)
 
-# Criar a aplicação FastAPI
 app = FastAPI(
-    title=settings.PROJECT_NAME,
-    version=settings.PROJECT_VERSION,
-    description="API para gerenciamento de calendário de eventos da SEAD",
-    lifespan=lifespan
+    title="SEAD Calendario Eventos API",
+    description="API for managing events in SEAD",
+    version="1.0.0"
 )
 
-# Configurar CORS
+# Configurar CORS para permitir requisições do frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],  # React/Vite dev servers
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Incluir as rotas da API
-app.include_router(routes.router, prefix="/api")
+# Incluir as rotas
+app.include_router(evento.router)
+app.include_router(unidade.router)
 
-# Handler global para exceções
-@app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
-    """Handler global para capturar exceções não tratadas"""
-    print(f"Erro não tratado: {exc}")
-    return JSONResponse(
-        status_code=500,
-        content={
-            "success": False,
-            "message": "Erro interno do servidor",
-            "detail": str(exc) if settings.DEBUG else "Erro interno"
-        }
-    )
-
-# Endpoint raiz
+# Rota de health check
 @app.get("/")
 async def root():
-    """Endpoint raiz da API"""
-    return {
-        "message": "SEAD - Calendário de Eventos API",
-        "version": settings.PROJECT_VERSION,
-        "docs": "/docs",
-        "health": "/api/health"
-    }
+    return {"message": "SEAD Calendario Eventos API is running"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "message": "API is running properly"}
 
 if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=settings.DEBUG,
-        log_level="info" if not settings.DEBUG else "debug"
-    )
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=5151, reload=True)
