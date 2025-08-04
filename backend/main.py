@@ -2,16 +2,17 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
+from sqlmodel import SQLModel
 import uvicorn
 
 from config import settings
-from database import engine, Base
+from database import engine
 import routes
 
 # Criar tabelas no banco de dados
 def create_tables():
     """Cria as tabelas no banco de dados"""
-    Base.metadata.create_all(bind=engine)
+    SQLModel.metadata.create_all(engine)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
