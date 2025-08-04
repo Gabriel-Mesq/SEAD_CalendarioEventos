@@ -2,24 +2,18 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
-from sqlmodel import SQLModel
 import uvicorn
 
 from config import settings
-from database import engine
+from database import create_db_and_tables
 import routes
-
-# Criar tabelas no banco de dados
-def create_tables():
-    """Cria as tabelas no banco de dados"""
-    SQLModel.metadata.create_all(engine)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Gerencia o ciclo de vida da aplicação"""
     # Startup
     print("🚀 Iniciando aplicação...")
-    create_tables()
+    create_db_and_tables()
     print("✅ Tabelas do banco de dados criadas/verificadas")
     yield
     # Shutdown
@@ -43,7 +37,7 @@ app.add_middleware(
 )
 
 # Incluir as rotas da API
-app.include_router(routes.router, prefix=settings.API_V1_STR)
+app.include_router(routes.router, prefix="/api")
 
 # Handler global para exceções
 @app.exception_handler(Exception)
@@ -67,7 +61,7 @@ async def root():
         "message": "SEAD - Calendário de Eventos API",
         "version": settings.PROJECT_VERSION,
         "docs": "/docs",
-        "health": f"{settings.API_V1_STR}/health"
+        "health": "/api/health"
     }
 
 if __name__ == "__main__":

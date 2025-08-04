@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 from typing import List
 from database import get_session
 from services import EventoService, UnidadeService
@@ -29,12 +29,7 @@ async def create_form_submission(
             )
         
         # Cria a unidade com os eventos
-        unidade_create = schemas.UnidadeCreate(
-            nome_unidade=form_data.nome_unidade,
-            eventos=form_data.eventos
-        )
-        
-        db_unidade = UnidadeService.create_unidade(db, unidade_create)
+        db_unidade = UnidadeService.create_unidade(db, form_data)
         
         return schemas.ApiResponse(
             success=True,
@@ -53,7 +48,7 @@ async def create_form_submission(
             errors={"server": [str(e)]}
         )
 
-@router.get("/eventos", response_model=List[schemas.EventoResponse])
+@router.get("/eventos", response_model=List[schemas.EventoRead])
 async def get_all_eventos(
     skip: int = 0,
     limit: int = 100,
@@ -63,7 +58,7 @@ async def get_all_eventos(
     eventos = EventoService.get_eventos(db, skip=skip, limit=limit)
     return eventos
 
-@router.get("/eventos/{evento_id}", response_model=schemas.EventoResponse)
+@router.get("/eventos/{evento_id}", response_model=schemas.EventoRead)
 async def get_evento(evento_id: int, db: Session = Depends(get_session)):
     """Busca um evento específico por ID"""
     evento = EventoService.get_evento(db, evento_id)
@@ -74,7 +69,7 @@ async def get_evento(evento_id: int, db: Session = Depends(get_session)):
         )
     return evento
 
-@router.put("/eventos/{evento_id}", response_model=schemas.EventoResponse)
+@router.put("/eventos/{evento_id}", response_model=schemas.EventoRead)
 async def update_evento(
     evento_id: int,
     evento_update: schemas.EventoUpdate,
@@ -100,7 +95,7 @@ async def delete_evento(evento_id: int, db: Session = Depends(get_session)):
         )
     return {"message": "Evento deletado com sucesso"}
 
-@router.get("/unidades", response_model=List[schemas.UnidadeResponse])
+@router.get("/unidades", response_model=List[schemas.UnidadeRead])
 async def get_all_unidades(
     skip: int = 0,
     limit: int = 100,
@@ -110,7 +105,7 @@ async def get_all_unidades(
     unidades = UnidadeService.get_unidades(db, skip=skip, limit=limit)
     return unidades
 
-@router.get("/unidades/{unidade_id}", response_model=schemas.UnidadeResponse)
+@router.get("/unidades/{unidade_id}", response_model=schemas.UnidadeRead)
 async def get_unidade(unidade_id: int, db: Session = Depends(get_session)):
     """Busca uma unidade específica por ID"""
     unidade = UnidadeService.get_unidade(db, unidade_id)

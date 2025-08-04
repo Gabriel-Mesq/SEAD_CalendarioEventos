@@ -1,15 +1,15 @@
-from sqlalchemy.orm import Session
+from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError
 from typing import List, Optional
-import models
+from models import Evento, Unidade
 import schemas
 
 class EventoService:
     @staticmethod
-    def create_evento(db: Session, evento: schemas.EventoCreate, unidade_id: int) -> models.Evento:
+    def create_evento(db: Session, evento: schemas.EventoCreate, unidade_id: int) -> Evento:
         """Cria um novo evento"""
-        db_evento = models.Evento(
-            **evento.dict(),
+        db_evento = Evento(
+            **evento.model_dump(),
             unidade_id=unidade_id
         )
         db.add(db_evento)
@@ -18,23 +18,28 @@ class EventoService:
         return db_evento
     
     @staticmethod
-    def get_evento(db: Session, evento_id: int) -> Optional[models.Evento]:
+    def get_evento(db: Session, evento_id: int) -> Optional[Evento]:
         """Busca um evento por ID"""
-        return db.query(models.Evento).filter(models.Evento.id == evento_id).first()
+        statement = select(Evento).where(Evento.id == evento_id)
+        return db.exec(statement).first()
     
     @staticmethod
-    def get_eventos(db: Session, skip: int = 0, limit: int = 100) -> List[models.Evento]:
+    def get_eventos(db: Session, skip: int = 0, limit: int = 100) -> List[Evento]:
         """Lista todos os eventos com paginação"""
-        return db.query(models.Evento).offset(skip).limit(limit).all()
+        statement = select(Evento).offset(skip).limit(limit)
+        return db.exec(statement).all()
     
     @staticmethod
-    def update_evento(db: Session, evento_id: int, evento_update: schemas.EventoUpdate) -> Optional[models.Evento]:
+    def update_evento(db: Session, evento_id: int, evento_update: schemas.EventoUpdate) -> Optional[Evento]:
         """Atualiza um evento"""
-        db_evento = db.query(models.Evento).filter(models.Evento.id == evento_id).first()
+        statement = select(Evento).where(Evento.id == evento_id)
+        db_evento = db.exec(statement).first()
+        
         if db_evento:
-            update_data = evento_update.dict(exclude_unset=True)
+            update_data = evento_update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
                 setattr(db_evento, field, value)
+            db.add(db_evento)
             db.commit()
             db.refresh(db_evento)
         return db_evento
@@ -42,7 +47,9 @@ class EventoService:
     @staticmethod
     def delete_evento(db: Session, evento_id: int) -> bool:
         """Deleta um evento"""
-        db_evento = db.query(models.Evento).filter(models.Evento.id == evento_id).first()
+        statement = select(Evento).where(Evento.id == evento_id)
+        db_evento = db.exec(statement).first()
+        
         if db_evento:
             db.delete(db_evento)
             db.commit()
@@ -51,18 +58,18 @@ class EventoService:
 
 class UnidadeService:
     @staticmethod
-    def create_unidade(db: Session, unidade: schemas.UnidadeCreate) -> models.Unidade:
+    def create_unidade(db: Session, unidade: schemas.FormSubmissionRequest) -> Unidade:
         """Cria uma nova unidade com seus eventos"""
         try:
             # Cria a unidade
-            db_unidade = models.Unidade(nome_unidade=unidade.nome_unidade)
+            db_unidade = Unidade(nome_unidade=unidade.nome_unidade)
             db.add(db_unidade)
             db.flush()  # Para obter o ID antes do commit
             
             # Cria os eventos associados
             for evento_data in unidade.eventos:
-                db_evento = models.Evento(
-                    **evento_data.dict(),
+                db_evento = Evento(
+                    **evento_data.model_dump(),
                     unidade_id=db_unidade.id
                 )
                 db.add(db_evento)
@@ -76,24 +83,29 @@ class UnidadeService:
             raise e
     
     @staticmethod
-    def get_unidade(db: Session, unidade_id: int) -> Optional[models.Unidade]:
+    def get_unidade(db: Session, unidade_id: int) -> Optional[Unidade]:
         """Busca uma unidade por ID"""
-        return db.query(models.Unidade).filter(models.Unidade.id == unidade_id).first()
+        statement = select(Unidade).where(Unidade.id == unidade_id)
+        return db.exec(statement).first()
     
     @staticmethod
-    def get_unidades(db: Session, skip: int = 0, limit: int = 100) -> List[models.Unidade]:
+    def get_unidades(db: Session, skip: int = 0, limit: int = 100) -> List[Unidade]:
         """Lista todas as unidades com paginação"""
-        return db.query(models.Unidade).offset(skip).limit(limit).all()
+        statement = select(Unidade).offset(skip).limit(limit)
+        return db.exec(statement).all()
     
     @staticmethod
-    def get_unidade_by_nome(db: Session, nome_unidade: str) -> Optional[models.Unidade]:
+    def get_unidade_by_nome(db: Session, nome_unidade: str) -> Optional[Unidade]:
         """Busca uma unidade pelo nome"""
-        return db.query(models.Unidade).filter(models.Unidade.nome_unidade == nome_unidade).first()
+        statement = select(Unidade).where(Unidade.nome_unidade == nome_unidade)
+        return db.exec(statement).first()
     
     @staticmethod
     def delete_unidade(db: Session, unidade_id: int) -> bool:
         """Deleta uma unidade e seus eventos"""
-        db_unidade = db.query(models.Unidade).filter(models.Unidade.id == unidade_id).first()
+        statement = select(Unidade).where(Unidade.id == unidade_id)
+        db_unidade = db.exec(statement).first()
+        
         if db_unidade:
             db.delete(db_unidade)
             db.commit()
