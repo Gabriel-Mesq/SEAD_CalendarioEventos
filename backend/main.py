@@ -17,7 +17,12 @@ app = FastAPI(
 # Configurar CORS para permitir requisições do frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://fs8sgk0w8wwk08o0kkwsww00.82.29.62.110.sslip.io"],  # React/Vite dev servers
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://localhost:5173", 
+        "http://fs8sgk0w8wwk08o0kkwsww00.82.29.62.110.sslip.io",
+        "http://gws804ggcosos8k0gccskocs.82.29.62.110.sslip.io",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
