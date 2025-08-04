@@ -1,5 +1,6 @@
 import React from 'react';
 import type { EventData } from '../types/event';
+import { UNIDADES } from '../types/event';
 
 interface EventFormProps {
   event: EventData;
@@ -61,14 +62,19 @@ const EventForm: React.FC<EventFormProps> = ({
 
         <div className="form-group">
           <label htmlFor={`unidade-${eventIndex}`}>Unidade Responsável:</label>
-          <input
-            type="text"
+          <select
             id={`unidade-${eventIndex}`}
             value={event.unidadeResponsavel}
             onChange={(e) => handleInputChange('unidadeResponsavel', e.target.value)}
-            placeholder="Digite a unidade responsável"
             required
-          />
+          >
+            <option value="">Selecione uma unidade</option>
+            {UNIDADES.map((unidade) => (
+              <option key={unidade} value={unidade}>
+                {unidade}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="form-group">
