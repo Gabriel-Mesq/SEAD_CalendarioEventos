@@ -16,3 +16,4 @@ google-auth
 aiofiles
 minio
 python-multipart
+asyncpg
