@@ -79,7 +79,7 @@ async def submit_form(form_data: FormSubmissionData, session: Session = Depends(
             errors={"detail": str(e)}
         )
 
-@router.get("/", response_model=List[EventoWithUnidade])
+@router.get("", response_model=List[EventoWithUnidade])
 async def get_eventos(session: Session = Depends(get_session)):
     """Listar todos os eventos com informações da unidade"""
     statement = select(Evento)
