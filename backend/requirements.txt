@@ -16,4 +16,4 @@ google-auth
 aiofiles
 minio
 python-multipart
-asyncpg
+psycopg2-binary
