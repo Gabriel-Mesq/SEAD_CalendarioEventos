@@ -6,8 +6,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: sead_backend
-    ports:
-      - "5151:5151"
+    expose:
+      - "5151"
     restart: unless-stopped
 
   frontend:
@@ -15,8 +15,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: sead_frontend
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     depends_on:
       - backend
     restart: unless-stopped
