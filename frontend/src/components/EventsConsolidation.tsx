@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { apiService, type ApiEventData } from '../services/api';
-import type { Month } from '../types/event';
 
 interface ConsolidatedEvent extends ApiEventData {
   id?: string;
