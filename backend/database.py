@@ -1,13 +1,14 @@
-from sqlalchemy import create_engine, MetaData
+import os
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import settings
+from sqlmodel import Session, create_engine
 
-# Criação do engine do SQLAlchemy
+DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(
-    settings.DATABASE_URL,
-    echo=settings.DEBUG,  # Log das queries SQL quando em debug
-    pool_pre_ping=True,   # Verifica conexões antes de usar
+    DATABASE_URL, 
+    echo=True,
+    pool_pre_ping=True,
 )
 
 # Configuração da sessão
@@ -20,9 +21,6 @@ Base = declarative_base()
 metadata = MetaData()
 
 # Dependency para obter sessão do banco
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+def get_session():
+    with Session(engine) as session:
+        yield session
