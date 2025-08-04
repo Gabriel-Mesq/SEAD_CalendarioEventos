@@ -1,37 +1,57 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from database import Base
+from sqlmodel import SQLModel, Field, Relationship
+from datetime import datetime
+from typing import Optional, List
 
-class Unidade(Base):
+class UnidadeBase(SQLModel):
+    nome_unidade: str
+
+class Unidade(UnidadeBase, table=True):
     __tablename__ = "unidades"
     
-    id = Column(Integer, primary_key=True, index=True)
-    nome_unidade = Column(String, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     
     # Relacionamento com eventos
-    eventos = relationship("Evento", back_populates="unidade", cascade="all, delete-orphan")
+    eventos: List["Evento"] = Relationship(back_populates="unidade")
 
-class Evento(Base):
+class UnidadeCreate(UnidadeBase):
+    pass
+
+class UnidadeRead(UnidadeBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+class EventoBase(SQLModel):
+    nome: str
+    unidade_responsavel: str
+    quantidade_pessoas: int
+    mes_previsto: str
+    coffee_break_manha: bool = False
+    coffee_break_tarde: bool = False
+    almoco: bool = False
+    jantar: bool = False
+    cerimonial: bool = False
+    unidade_id: int = Field(foreign_key="unidades.id")
+
+class Evento(EventoBase, table=True):
     __tablename__ = "eventos"
     
-    id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String, nullable=False)
-    unidade_responsavel = Column(String, nullable=False)
-    quantidade_pessoas = Column(Integer, nullable=False)
-    mes_previsto = Column(String, nullable=False)
-    coffee_break_manha = Column(Boolean, default=False)
-    coffee_break_tarde = Column(Boolean, default=False)
-    almoco = Column(Boolean, default=False)
-    jantar = Column(Boolean, default=False)
-    cerimonial = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    
-    # Foreign Key para unidade
-    unidade_id = Column(Integer, ForeignKey("unidades.id"), nullable=False)
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
     
     # Relacionamento com unidade
-    unidade = relationship("Unidade", back_populates="eventos")
+    unidade: Optional[Unidade] = Relationship(back_populates="eventos")
+
+class EventoCreate(EventoBase):
+    pass
+
+class EventoRead(EventoBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+class EventoReadWithUnidade(EventoRead):
+    unidade: Optional[UnidadeRead] = None
