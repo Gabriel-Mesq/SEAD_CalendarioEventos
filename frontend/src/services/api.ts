@@ -13,10 +13,12 @@ export interface ApiEventData {
   almoco: boolean;
   jantar: boolean;
   cerimonial: boolean;
+  nome_solicitante: string; // Novo campo
 }
 
 export interface ApiFormData {
   nome_unidade: string;
+  nome_solicitante: string; // Novo campo
   eventos: ApiEventData[];
 }
 

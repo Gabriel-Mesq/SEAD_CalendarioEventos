@@ -8,6 +8,7 @@ export interface EventData {
   almoco: boolean;
   jantar: boolean;
   cerimonial: boolean;
+  nomeSolicitante: string; 
 }
 
 export interface MonthEventData {
@@ -18,6 +19,7 @@ export interface MonthEventData {
 
 export interface FormData {
   nomeUnidade: string;
+  nomeSolicitante: string;
   months: MonthEventData[];
 }
 

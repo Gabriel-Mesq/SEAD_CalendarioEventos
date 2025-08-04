@@ -48,6 +48,18 @@ const EventForm: React.FC<EventFormProps> = ({
         </div>
 
         <div className="form-group">
+          <label htmlFor={`solicitante-${eventIndex}`}>Nome do Solicitante:</label>
+          <input
+            type="text"
+            id={`solicitante-${eventIndex}`}
+            value={event.nomeSolicitante}
+            readOnly
+            className="readonly-input"
+            placeholder="Será preenchido automaticamente"
+          />
+        </div>
+
+        <div className="form-group">
           <label htmlFor={`unidade-${eventIndex}`}>Unidade Responsável:</label>
           <input
             type="text"

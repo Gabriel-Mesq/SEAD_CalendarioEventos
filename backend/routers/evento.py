@@ -45,6 +45,7 @@ async def submit_form(form_data: FormSubmissionData, session: Session = Depends(
             evento = Evento(
                 nome=evento_data.nome,
                 unidade_responsavel=evento_data.unidade_responsavel,
+                nome_solicitante=evento_data.nome_solicitante,  # Incluir nome do solicitante
                 quantidade_pessoas=evento_data.quantidade_pessoas,
                 mes_previsto=mes_enum,
                 coffee_break_manha=evento_data.coffee_break_manha,

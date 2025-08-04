@@ -7,6 +7,7 @@ import { apiService } from '../services/api';
 const EventCalendarForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     nomeUnidade: '',
+    nomeSolicitante: '', // Novo campo
     months: MONTHS.map(month => ({
       month,
       hasEvents: false,
@@ -24,11 +25,39 @@ const EventCalendarForm: React.FC = () => {
     }));
   };
 
+  const handleSolicitanteNameChange = (name: string) => {
+    setFormData(prev => {
+      // Atualizar todos os eventos existentes com o novo nome do solicitante
+      const updatedMonths = prev.months.map(month => ({
+        ...month,
+        events: month.events.map(event => ({
+          ...event,
+          nomeSolicitante: name
+        }))
+      }));
+
+      return {
+        ...prev,
+        nomeSolicitante: name,
+        months: updatedMonths
+      };
+    });
+  };
+
   const handleMonthChange = (monthIndex: number, updatedMonth: MonthEventData) => {
+    // Garantir que todos os eventos tenham o nome do solicitante
+    const monthWithSolicitante = {
+      ...updatedMonth,
+      events: updatedMonth.events.map(event => ({
+        ...event,
+        nomeSolicitante: formData.nomeSolicitante
+      }))
+    };
+
     setFormData(prev => ({
       ...prev,
       months: prev.months.map((month, index) =>
-        index === monthIndex ? updatedMonth : month
+        index === monthIndex ? monthWithSolicitante : month
       )
     }));
   };
@@ -36,6 +65,11 @@ const EventCalendarForm: React.FC = () => {
   const validateForm = (): boolean => {
     if (!formData.nomeUnidade.trim()) {
       setSubmitMessage('Por favor, informe o nome da unidade.');
+      return false;
+    }
+
+    if (!formData.nomeSolicitante.trim()) {
+      setSubmitMessage('Por favor, informe o nome do solicitante.');
       return false;
     }
 
@@ -85,6 +119,7 @@ const EventCalendarForm: React.FC = () => {
       // Preparar dados para envio ao backend FastAPI
       const dataToSubmit = {
         nome_unidade: formData.nomeUnidade,
+        nome_solicitante: formData.nomeSolicitante, // Incluir nome do solicitante
         eventos: formData.months
           .filter(month => month.hasEvents && month.events.length > 0)
           .flatMap(month => 
@@ -97,7 +132,8 @@ const EventCalendarForm: React.FC = () => {
               coffee_break_tarde: event.coffeeBreakTarde,
               almoco: event.almoco,
               jantar: event.jantar,
-              cerimonial: event.cerimonial
+              cerimonial: event.cerimonial,
+              nome_solicitante: event.nomeSolicitante // Incluir em cada evento
             }))
           )
       };
@@ -125,6 +161,7 @@ const EventCalendarForm: React.FC = () => {
       // Reset do formulário após sucesso
       setFormData({
         nomeUnidade: '',
+        nomeSolicitante: '',
         months: MONTHS.map(month => ({
           month,
           hasEvents: false,
@@ -165,6 +202,18 @@ const EventCalendarForm: React.FC = () => {
             />
           </div>
 
+          <div className="form-group">
+            <label htmlFor="nomeSolicitante">Nome do Solicitante:</label>
+            <input
+              type="text"
+              id="nomeSolicitante"
+              value={formData.nomeSolicitante}
+              onChange={(e) => handleSolicitanteNameChange(e.target.value)}
+              placeholder="Digite o nome do solicitante"
+              required
+            />
+          </div>
+
           {/* Resumo */}
           <div className="form-summary">
             <p><strong>Resumo:</strong></p>
@@ -181,6 +230,7 @@ const EventCalendarForm: React.FC = () => {
             <MonthSection
               key={month.month}
               monthData={month}
+              nomeSolicitante={formData.nomeSolicitante}
               onMonthChange={(updatedMonth) => handleMonthChange(index, updatedMonth)}
             />
           ))}

@@ -51,6 +51,7 @@ class UnidadeUpdate(SQLModel):
 class EventoBase(SQLModel):
     nome: str = Field(max_length=255)
     unidade_responsavel: str = Field(max_length=255)
+    nome_solicitante: str = Field(max_length=255)  # Novo campo
     quantidade_pessoas: int
     mes_previsto: MonthEnum
     coffee_break_manha: bool = Field(default=False)
@@ -84,6 +85,7 @@ class EventoRead(EventoBase):
 class EventoUpdate(SQLModel):
     nome: Optional[str] = None
     unidade_responsavel: Optional[str] = None
+    nome_solicitante: Optional[str] = None  # Novo campo
     quantidade_pessoas: Optional[int] = Field(default=None, gt=0)
     mes_previsto: Optional[MonthEnum] = None
     coffee_break_manha: Optional[bool] = None
@@ -97,6 +99,7 @@ class EventoUpdate(SQLModel):
 class EventoFormData(SQLModel):
     nome: str
     unidade_responsavel: str
+    nome_solicitante: str  # Novo campo
     quantidade_pessoas: int
     mes_previsto: str
     coffee_break_manha: bool
@@ -108,6 +111,7 @@ class EventoFormData(SQLModel):
 
 class FormSubmissionData(SQLModel):
     nome_unidade: str
+    nome_solicitante: str  # Novo campo
     eventos: List[EventoFormData]
 
 

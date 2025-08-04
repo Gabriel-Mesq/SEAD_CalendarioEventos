@@ -5,9 +5,10 @@ import EventForm from './EventForm';
 interface MonthSectionProps {
   monthData: MonthEventData;
   onMonthChange: (monthData: MonthEventData) => void;
+  nomeSolicitante?: string; // Prop opcional para receber o nome do solicitante
 }
 
-const MonthSection: React.FC<MonthSectionProps> = ({ monthData, onMonthChange }) => {
+const MonthSection: React.FC<MonthSectionProps> = ({ monthData, onMonthChange, nomeSolicitante = '' }) => {
   const handleHasEventsChange = (hasEvents: boolean) => {
     onMonthChange({
       ...monthData,
@@ -26,7 +27,8 @@ const MonthSection: React.FC<MonthSectionProps> = ({ monthData, onMonthChange })
       coffeeBreakTarde: false,
       almoco: false,
       jantar: false,
-      cerimonial: false
+      cerimonial: false,
+      nomeSolicitante: nomeSolicitante // Usar o nome do solicitante recebido via props
     };
 
     onMonthChange({
