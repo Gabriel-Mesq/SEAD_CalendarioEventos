@@ -6,3 +6,5 @@ python-dotenv
 pydantic
 python-multipart
 mysql-connector-python
+pymysql
+pytest
