@@ -3,6 +3,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 from sqlmodel import SQLModel
+import os
 
 # Importe seus modelos aqui
 from models import Unidade, Evento
@@ -27,7 +28,7 @@ target_metadata = SQLModel.metadata
 
 def get_url():
     """Obtém a URL do banco de dados das configurações"""
-    return settings.DATABASE_URL
+    return os.getenv("DATABASE_URL")
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
