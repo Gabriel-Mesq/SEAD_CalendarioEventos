@@ -11,8 +11,6 @@ PyJWT
 python-jose
 fastapi_mail
 fpdf
-prometheus-fastapi-instrumentator
-mysql-connector-python
 alembic
 google-auth
 aiofiles
