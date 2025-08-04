@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { FormData, MonthEventData } from '../types/event';
-import { MONTHS } from '../types/event';
+import { MONTHS, UNIDADES } from '../types/event';
 import MonthSection from './MonthSection';
 import { apiService } from '../services/api';
 
@@ -192,14 +192,19 @@ const EventCalendarForm: React.FC = () => {
         <section className="form-header-section">
           <div className="form-group">
             <label htmlFor="nomeUnidade">Nome da Unidade:</label>
-            <input
-              type="text"
+            <select
               id="nomeUnidade"
               value={formData.nomeUnidade}
               onChange={(e) => handleUnitNameChange(e.target.value)}
-              placeholder="Digite o nome da unidade"
               required
-            />
+            >
+              <option value="">Selecione uma unidade</option>
+              {UNIDADES.map((unidade) => (
+                <option key={unidade} value={unidade}>
+                  {unidade}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">

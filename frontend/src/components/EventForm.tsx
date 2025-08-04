@@ -86,6 +86,7 @@ const EventForm: React.FC<EventFormProps> = ({
             onChange={(e) => handleInputChange('quantidadePessoas', parseInt(e.target.value) || 0)}
             placeholder="0"
             min="0"
+            max="2000000"
             required
           />
         </div>
