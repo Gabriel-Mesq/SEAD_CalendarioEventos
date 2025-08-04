@@ -51,7 +51,7 @@ class UnidadeUpdate(SQLModel):
 class EventoBase(SQLModel):
     nome: str = Field(max_length=255)
     unidade_responsavel: str = Field(max_length=255)
-    quantidade_pessoas: int = Field(gt=0)
+    quantidade_pessoas: int
     mes_previsto: MonthEnum
     coffee_break_manha: bool = Field(default=False)
     coffee_break_tarde: bool = Field(default=False)

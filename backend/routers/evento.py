@@ -13,32 +13,7 @@ from models import (
 router = APIRouter(prefix="/api/eventos", tags=["eventos"])
 
 
-@router.post("/", response_model=ApiResponse)
-async def create_evento(evento: EventoCreate, session: Session = Depends(get_session)):
-    """Criar um novo evento"""
-    try:
-        db_evento = Evento.model_validate(evento)
-        db_evento.updated_at = datetime.utcnow()
-        
-        session.add(db_evento)
-        session.commit()
-        session.refresh(db_evento)
-        
-        return ApiResponse(
-            success=True,
-            message="Evento criado com sucesso",
-            data={"evento": db_evento.model_dump()}
-        )
-    except Exception as e:
-        session.rollback()
-        return ApiResponse(
-            success=False,
-            message="Erro ao criar evento",
-            errors={"detail": str(e)}
-        )
-
-
-@router.post("/submit-form", response_model=ApiResponse)
+@router.post("", response_model=ApiResponse)
 async def submit_form(form_data: FormSubmissionData, session: Session = Depends(get_session)):
     """Submeter formulário completo com unidade e eventos"""
     try:
@@ -94,10 +69,15 @@ async def submit_form(form_data: FormSubmissionData, session: Session = Depends(
             }
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-
+        return ApiResponse(
+            success=False,
+            message="Erro ao processar formulário",
+            errors={"detail": str(e)}
+        )
 
 @router.get("/", response_model=List[EventoWithUnidade])
 async def get_eventos(session: Session = Depends(get_session)):
