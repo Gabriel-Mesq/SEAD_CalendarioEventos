@@ -19,10 +19,22 @@ const EventCalendarForm: React.FC = () => {
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
   const handleUnitNameChange = (name: string) => {
-    setFormData(prev => ({
-      ...prev,
-      nomeUnidade: name
-    }));
+    setFormData(prev => {
+      // Atualizar todos os eventos existentes com a nova unidade responsável
+      const updatedMonths = prev.months.map(month => ({
+        ...month,
+        events: month.events.map(event => ({
+          ...event,
+          unidadeResponsavel: name // Preencher automaticamente a unidade responsável
+        }))
+      }));
+
+      return {
+        ...prev,
+        nomeUnidade: name,
+        months: updatedMonths
+      };
+    });
   };
 
   const handleSolicitanteNameChange = (name: string) => {
@@ -236,6 +248,7 @@ const EventCalendarForm: React.FC = () => {
               key={month.month}
               monthData={month}
               nomeSolicitante={formData.nomeSolicitante}
+              nomeUnidade={formData.nomeUnidade} // Passar a unidade selecionada
               onMonthChange={(updatedMonth) => handleMonthChange(index, updatedMonth)}
             />
           ))}
