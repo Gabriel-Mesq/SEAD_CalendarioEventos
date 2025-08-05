@@ -1,6 +1,6 @@
 // Configuração da API
 const API_BASE_URL = import.meta.env.PROD 
-  ? 'http://fs8sgk0w8wwk08o0kkwsww00.82.29.62.110.sslip.io/api' 
+  ? 'https://fs8sgk0w8wwk08o0kkwsww00.82.29.62.110.sslip.io/api' 
   : 'http://localhost:8000/api';
 
 export interface ApiEventData {
