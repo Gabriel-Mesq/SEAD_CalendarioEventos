@@ -222,3 +222,24 @@ async def get_stats(session: Session = Depends(get_session)):
         pessoas_por_mes=pessoas_por_mes,
         servicos_mais_solicitados=servicos
     )
+
+
+@router.delete("/all", response_model=ApiResponse)
+async def delete_all_eventos(session: Session = Depends(get_session)):
+    """Deletar todos os eventos"""
+    try:
+        deleted = session.exec(select(Evento)).all()
+        for evento in deleted:
+            session.delete(evento)
+        session.commit()
+        return ApiResponse(
+            success=True,
+            message=f"{len(deleted)} eventos deletados com sucesso"
+        )
+    except Exception as e:
+        session.rollback()
+        return ApiResponse(
+            success=False,
+            message="Erro ao deletar todos os eventos",
+            errors={"detail": str(e)}
+        )
