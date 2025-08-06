@@ -22,6 +22,17 @@ const EventForm: React.FC<EventFormProps> = ({
     });
   };
 
+  const calcularCustoEstimado = (event: EventData) => {
+    const pessoas = event.quantidadePessoas || 0;
+    let total = 0;
+    if (event.coffeeBreakManha) total += 50 * pessoas;
+    if (event.coffeeBreakTarde) total += 50 * pessoas;
+    if (event.almoco) total += 70 * pessoas;
+    if (event.jantar) total += 70 * pessoas;
+    if (event.cerimonial) total += 990; 
+    return total;
+  };
+
   return (
     <div className="event-form">
       <div className="event-form-header">
@@ -155,6 +166,13 @@ const EventForm: React.FC<EventFormProps> = ({
             />
             Cerimonial
           </label>
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Custo Estimado:</label>
+        <div style={{ fontWeight: 'bold', color: '#27ae60' }}>
+          R$ {calcularCustoEstimado(event).toLocaleString('pt-BR')}
         </div>
       </div>
     </div>
