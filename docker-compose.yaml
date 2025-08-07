@@ -8,6 +8,8 @@ services:
     container_name: sead_backend
     expose:
       - "5151"
+    ports:
+      - "5151:5151"
     restart: unless-stopped
     environment:
       - DATABASE_URL=${DATABASE_URL}
