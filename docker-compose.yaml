@@ -6,8 +6,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: sead_backend
-    expose:
-      - "5151"
     ports:
       - "5151:5151"
     restart: unless-stopped
