@@ -220,6 +220,17 @@ const EventCalendarForm: React.FC = () => {
           </div>
 
           <div className="form-group">
+            <label htmlFor="gerencia">Gerência:</label>
+            <input
+              type="text"
+              id="gerencia"
+              value=""
+              readOnly
+              placeholder="A sigla da sua gerência"
+            />
+          </div>
+
+          <div className="form-group">
             <label htmlFor="nomeSolicitante">Nome do Solicitante:</label>
             <input
               type="text"
