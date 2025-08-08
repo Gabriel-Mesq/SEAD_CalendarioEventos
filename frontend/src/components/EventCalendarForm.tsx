@@ -225,7 +225,6 @@ const EventCalendarForm: React.FC = () => {
               type="text"
               id="gerencia"
               value=""
-              readOnly
               placeholder="A sigla da sua gerência"
             />
           </div>
