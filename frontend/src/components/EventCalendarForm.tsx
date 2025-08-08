@@ -17,6 +17,7 @@ const EventCalendarForm: React.FC = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [gerencia, setGerencia] = useState('');
 
   const handleUnitNameChange = (name: string) => {
     setFormData(prev => {
@@ -224,7 +225,8 @@ const EventCalendarForm: React.FC = () => {
             <input
               type="text"
               id="gerencia"
-              value=""
+              value={gerencia}
+              onChange={(e) => setGerencia(e.target.value)}
               placeholder="A sigla da sua gerência"
             />
           </div>
