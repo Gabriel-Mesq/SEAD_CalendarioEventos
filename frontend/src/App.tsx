@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import EventCalendarForm from './components/EventCalendarForm.tsx'
-import EventsConsolidation from './components/EventsConsolidation.tsx'
+import ProtectedConsolidation from './components/ProtectedConsolidation.tsx'
 
 type ActiveView = 'form' | 'consolidation';
 
@@ -29,7 +29,7 @@ function App() {
       </header>
       <main className="app-main">
         {activeView === 'form' && <EventCalendarForm />}
-        {activeView === 'consolidation' && <EventsConsolidation />}
+        {activeView === 'consolidation' && <ProtectedConsolidation />}
       </main>
     </div>
   )

@@ -645,6 +645,58 @@ body {
   margin-bottom: 1rem;
 }
 
+/* Tela de proteção por senha */
+.password-protect-container {
+  max-width: 350px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background: #f8f8fc;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.password-protect-container label {
+  font-weight: 500;
+  margin-bottom: 12px;
+  display: block;
+  font-size: 1.1em;
+}
+
+.password-protect-container input[type="password"] {
+  padding: 8px 12px;
+  font-size: 1em;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.password-protect-container button {
+  background: #2e5fa7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.password-protect-container button:hover {
+  background: #1d4170;
+}
+
+.error-message {
+  color: #c00;
+  margin-top: 10px;
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .app-main {
