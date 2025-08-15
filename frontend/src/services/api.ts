@@ -34,36 +34,45 @@ class ApiService {
     endpoint: string, 
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        ...options,
-      });
+    const maxTimeMs = 60000; // 1 minuto
+    const intervalMs = 2000; // 2 segundos entre tentativas
+    const startTime = Date.now();
 
-      const data = await response.json();
+    while (Date.now() - startTime < maxTimeMs) {
+      try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+          ...options,
+        });
 
-      if (!response.ok) {
+        const data = await response.json();
+
+        if (!response.ok) {
+          return {
+            success: false,
+            message: data.detail || 'Erro na requisição',
+            errors: data.errors,
+          };
+        }
+
         return {
-          success: false,
-          message: data.detail || 'Erro na requisição',
-          errors: data.errors,
+          success: true,
+          data,
         };
+      } catch (error) {
+        // Aguarda antes de tentar novamente
+        await new Promise(res => setTimeout(res, intervalMs));
       }
-
-      return {
-        success: true,
-        data,
-      };
-    } catch (error) {
-      console.error('Erro na API:', error);
-      return {
-        success: false,
-        message: 'Erro de conexão com o servidor',
-      };
     }
+
+    // Se não conseguir após 1 minuto
+    return {
+      success: false,
+      message: 'Erro de conexão com o servidor. Tente fazer o envio por outro navegador ou verifique sua internet.',
+    };
   }
 
   async submitForm(formData: ApiFormData): Promise<ApiResponse<any>> {
