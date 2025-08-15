@@ -24,6 +24,7 @@ app.add_middleware(
         "https://fs8sgk0w8wwk08o0kkwsww00.82.29.62.110.sslip.io",
         "http://gws804ggcosos8k0gccskocs.82.29.62.110.sslip.io",
         "https://gws804ggcosos8k0gccskocs.82.29.62.110.sslip.io",
+        "https://api.sead.allsafeassessoria.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
