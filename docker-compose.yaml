@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: sead_backend
     ports:
-      - "5151:5151"
+      - "2095:2095"
     restart: unless-stopped
     environment:
       - DATABASE_URL=${DATABASE_URL}
