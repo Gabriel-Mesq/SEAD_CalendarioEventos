@@ -139,3 +139,12 @@ class ApiResponse(SQLModel):
     message: Optional[str] = None
     data: Optional[dict] = None
     errors: Optional[dict] = None
+
+class Veiculo (SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    modelo: str = Field(max_length=255)
+    placa: str = Field(max_length=10)
+    kilometragem: int
+    proxima_manutencao: int  
+    ultima_limpeza: datetime 
+#endregion
