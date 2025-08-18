@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
 
 from db import engine
-from routers import evento, unidade
+from routers import evento, unidade, frotas
 
 # Criar tabelas no banco
 SQLModel.metadata.create_all(engine)
@@ -32,6 +32,7 @@ app.add_middleware(
 # Incluir as rotas
 app.include_router(evento.router)
 app.include_router(unidade.router)
+app.include_router(frotas.router)
 
 # Rota de health check
 @app.get("/")

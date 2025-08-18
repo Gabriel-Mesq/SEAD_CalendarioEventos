@@ -140,11 +140,12 @@ class ApiResponse(SQLModel):
     data: Optional[dict] = None
     errors: Optional[dict] = None
 
+#region Frotas
 class Veiculo (SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     modelo: str = Field(max_length=255)
     placa: str = Field(max_length=10)
-    kilometragem: int
+    quilometragem: int
     proxima_manutencao: int  
     ultima_limpeza: datetime 
 #endregion

@@ -7,9 +7,9 @@ interface Veiculo {
   id: number;
   modelo: string;
   placa: string;
-  kilometragem: number;
-  proximaManutencao: number;
-  ultimaLimpeza: string;
+  quilometragem: number;
+  proxima_manutencao: number;
+  ultima_limpeza: string; 
 }
 
 const Frotas: React.FC = () => {
@@ -17,8 +17,9 @@ const Frotas: React.FC = () => {
   const [form, setForm] = useState({
     modelo: "",
     placa: "",
-    kilometragem: "",
+    quilometragem: "",
     proximaManutencao: "",
+    ultimaLimpeza: "", 
   });
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,7 @@ const Frotas: React.FC = () => {
   useEffect(() => {
     const fetchVeiculos = async () => {
       setLoading(true);
-      const res = await apiService.request<Veiculo[]>("/frotas/");
+      const res = await apiService.request<Veiculo[]>("/frotas");
       if (res.success && res.data) setVeiculos(res.data);
       setLoading(false);
     };
@@ -44,11 +45,11 @@ const Frotas: React.FC = () => {
     const novoVeiculo = {
       modelo: form.modelo,
       placa: form.placa,
-      kilometragem: Number(form.kilometragem),
-      proximaManutencao: Number(form.proximaManutencao),
-      ultimaLimpeza: new Date().toISOString().slice(0, 10),
+      quilometragem: form.quilometragem ? Number(form.quilometragem) : 0,
+      proxima_manutencao: form.proximaManutencao ? Number(form.proximaManutencao) : 0,
+      ultima_limpeza: form.ultimaLimpeza || new Date().toISOString().slice(0, 10),
     };
-    const res = await apiService.request<Veiculo>("/frotas/", {
+    const res = await apiService.request<Veiculo>("/frotas", {
       method: "POST",
       body: JSON.stringify(novoVeiculo),
     });
@@ -61,17 +62,18 @@ const Frotas: React.FC = () => {
     setForm({
       modelo: "",
       placa: "",
-      kilometragem: "",
+      quilometragem: "",
       proximaManutencao: "",
+      ultimaLimpeza: "",
     });
     setModalOpen(false);
     setLoading(false);
     setTimeout(() => setFeedback(null), 3000);
   };
 
-  const verificarManutencao = (veiculo: Veiculo) => veiculo.kilometragem >= veiculo.proximaManutencao;
+  const verificarManutencao = (veiculo: Veiculo) => veiculo.quilometragem >= veiculo.proxima_manutencao;
   const verificarLimpeza = (veiculo: Veiculo) => {
-    const ultima = new Date(veiculo.ultimaLimpeza);
+    const ultima = new Date(veiculo.ultima_limpeza);
     const hoje = new Date();
     const diff = hoje.getTime() - ultima.getTime();
     return diff > 30 * 24 * 60 * 60 * 1000;
@@ -101,10 +103,10 @@ const Frotas: React.FC = () => {
             required
           />
           <input
-            name="kilometragem"
+            name="quilometragem"
             type="number"
-            placeholder="Kilometragem atual"
-            value={form.kilometragem}
+            placeholder="Quilometragem atual"
+            value={form.quilometragem}
             onChange={handleChange}
             required
           />
@@ -113,6 +115,14 @@ const Frotas: React.FC = () => {
             type="number"
             placeholder="Km para próxima manutenção"
             value={form.proximaManutencao}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="ultimaLimpeza"
+            type="date"
+            placeholder="Data da última limpeza"
+            value={form.ultimaLimpeza}
             onChange={handleChange}
             required
           />
@@ -131,7 +141,7 @@ const Frotas: React.FC = () => {
             <tr>
               <th>Modelo</th>
               <th>Placa</th>
-              <th>Kilometragem</th>
+              <th>Quilometragem</th>
               <th>Próxima Manutenção (Km)</th>
               <th>Limpeza Mensal</th>
             </tr>
@@ -141,14 +151,14 @@ const Frotas: React.FC = () => {
               <tr key={v.id}>
                 <td>{v.modelo}</td>
                 <td>{v.placa}</td>
-                <td>{v.kilometragem.toLocaleString()}</td>
+                <td>{v.quilometragem.toLocaleString()}</td>
                 <td>
                   {verificarManutencao(v) ? (
                     <span className="frotas-alert manutencao">
                       <span role="img" aria-label="alert">⚠️</span> Manutenção pendente!
                     </span>
                   ) : (
-                    v.proximaManutencao.toLocaleString()
+                    v.proxima_manutencao.toLocaleString()
                   )}
                 </td>
                 <td>
@@ -157,7 +167,7 @@ const Frotas: React.FC = () => {
                       <span role="img" aria-label="alert">🧹</span> Limpeza pendente!
                     </span>
                   ) : (
-                    new Date(v.ultimaLimpeza).toLocaleDateString()
+                    new Date(v.ultima_limpeza).toLocaleDateString()
                   )}
                 </td>
               </tr>
