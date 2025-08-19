@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css'
-import EventCalendarForm from './components/EventCalendarForm.tsx'
-import ProtectedConsolidation from './components/ProtectedConsolidation.tsx'
 import Home from './components/Home'
 import Header from './components/Header'
 import Frotas from './pages/Frotas';
