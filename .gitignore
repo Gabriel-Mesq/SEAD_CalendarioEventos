@@ -10,7 +10,6 @@ __pycache__/
 backend/.env
 backend/venv/
 backend/*.log
-backend/alembic/versions/*.py
 !backend/alembic/versions/.gitkeep
 
 # Distribution / packaging
