@@ -47,7 +47,7 @@ const Home: React.FC<HomeProps> = ({ onSelectModule }) => (
     }}
   >
     <Typography variant="h3" gutterBottom fontWeight={700} color="success.main">
-      HUB SEAD
+        SEAD - Anexo Universitário
     </Typography>
     <Typography variant="body1" gutterBottom>
       Selecione o módulo que deseja acessar:

@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick }) => {
           sx={{ flexGrow: 1 }}
           onClick={handleHomeClick}
         >
-          HUB SEAD
+          SEAD - Anexo Universitário
         </Typography>
       </Toolbar>
     </AppBar>
