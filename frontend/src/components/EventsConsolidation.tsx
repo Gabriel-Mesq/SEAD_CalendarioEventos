@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiService, type ApiEventData } from '../services/api';
+import ContractExecution from './ContractExecution';
+import './ContractExecution.css';
 
 interface ConsolidatedEvent extends ApiEventData {
   id?: string;
@@ -99,28 +101,28 @@ const EventsConsolidation: React.FC = () => {
     if (selectedMonth === 'all') return events;
     return events.filter(event => event.mes_previsto === selectedMonth);
   };
-
+  
   const getTotalPeople = () => {
     return getFilteredEvents().reduce((total, event) => total + event.quantidade_pessoas, 0);
   };
-
+  
   const getUniqueMonths = () => {
     const months = [...new Set(events.map(event => event.mes_previsto))];
     const monthOrder = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                       'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-    return months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
-  };
-
-  if (loading) {
-    return (
-      <div className="consolidation-container">
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      return months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
+    };
+    
+    if (loading) {
+      return (
+        <div className="consolidation-container">
         <div className="loading">
           <p>Carregando eventos...</p>
         </div>
       </div>
     );
   }
-
+  
   if (error) {
     return (
       <div className="consolidation-container">
@@ -133,11 +135,11 @@ const EventsConsolidation: React.FC = () => {
       </div>
     );
   }
-
+  
   const monthSummaries = getMonthSummaries();
   const servicesSummary = getServicesSummary();
   const filteredEvents = getFilteredEvents();
-
+  
   return (
     <div className="consolidation-container">
       <div className="consolidation-header">
@@ -225,6 +227,8 @@ const EventsConsolidation: React.FC = () => {
           ))}
         </div>
       </div>
+      
+      <ContractExecution contractTotal={200000} events={events} />
 
       {/* Lista Detalhada de Eventos */}
       <div className="events-list">
