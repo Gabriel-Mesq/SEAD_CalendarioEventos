@@ -228,7 +228,7 @@ const EventsConsolidation: React.FC = () => {
         </div>
       </div>
       
-      <ContractExecution contractTotal={200000} events={events} />
+      <ContractExecution contractTotal={306741.50} events={events} />
 
       {/* Lista Detalhada de Eventos */}
       <div className="events-list">
