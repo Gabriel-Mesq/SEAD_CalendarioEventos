@@ -2,6 +2,9 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from datetime import datetime
+import csv
+from fastapi.responses import StreamingResponse
+from io import StringIO
 
 from db import get_session
 from models import (
@@ -242,3 +245,34 @@ async def get_stats(session: Session = Depends(get_session)):
         pessoas_por_mes=pessoas_por_mes,
         servicos_mais_solicitados=servicos
     )
+
+
+@router.get("/export/csv")
+async def export_eventos_csv(session: Session = Depends(get_session)):
+    """Exportar todos os eventos em formato CSV"""
+    eventos = session.exec(select(Evento)).all()
+    output = StringIO()
+    writer = csv.writer(output)
+    # Cabeçalho
+    writer.writerow([
+        "ID", "Nome", "Unidade Responsável", "Nome Solicitante", "Quantidade Pessoas",
+        "Mês Previsto", "Coffee Break Manhã", "Coffee Break Tarde", "Almoço", "Jantar", "Cerimonial", "Unidade"
+    ])
+    # Dados
+    for evento in eventos:
+        writer.writerow([
+            evento.id,
+            evento.nome,
+            evento.unidade_responsavel,
+            evento.nome_solicitante,
+            evento.quantidade_pessoas,
+            evento.mes_previsto.value if evento.mes_previsto else "",
+            evento.coffee_break_manha,
+            evento.coffee_break_tarde,
+            evento.almoco,
+            evento.jantar,
+            evento.cerimonial,
+            evento.unidade.nome_unidade if evento.unidade else ""
+        ])
+    output.seek(0)
+    return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=eventos.csv"})
