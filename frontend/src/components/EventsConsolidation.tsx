@@ -140,6 +140,18 @@ const EventsConsolidation: React.FC = () => {
   const servicesSummary = getServicesSummary();
   const filteredEvents = getFilteredEvents();
   
+  // Função para calcular custo estimado de um evento
+  const calcularCustoEstimado = (event: ApiEventData) => {
+    const pessoas = event.quantidade_pessoas || 0;
+    let total = 0;
+    if (event.coffee_break_manha) total += 50 * pessoas;
+    if (event.coffee_break_tarde) total += 50 * pessoas;
+    if (event.almoco) total += 70 * pessoas;
+    if (event.jantar) total += 70 * pessoas;
+    if (event.cerimonial) total += 990;
+    return total;
+  };
+
   return (
     <div className="consolidation-container">
       <div className="consolidation-header">
@@ -250,6 +262,7 @@ const EventsConsolidation: React.FC = () => {
               <div>Mês</div>
               <div>Pessoas</div>
               <div>Serviços</div>
+              <div>Preço Estimado</div>
             </div>
             
             {filteredEvents.map((event, index) => (
@@ -266,6 +279,9 @@ const EventsConsolidation: React.FC = () => {
                     event.jantar && 'Jantar',
                     event.cerimonial && 'Cerimonial'
                   ].filter(Boolean).join(', ') || 'Nenhum'}
+                </div>
+                <div className="event-price">
+                  R$ {calcularCustoEstimado(event).toLocaleString('pt-BR')}
                 </div>
               </div>
             ))}
