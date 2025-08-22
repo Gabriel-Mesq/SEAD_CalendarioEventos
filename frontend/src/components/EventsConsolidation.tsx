@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiService, type ApiEventData } from '../services/api';
 import ContractExecution from './ContractExecution';
 import './ContractExecution.css';
+import Modal from 'react-modal'; // Instale com: npm install react-modal
 
 interface ConsolidatedEvent extends ApiEventData {
   id?: string;
@@ -27,6 +28,8 @@ const EventsConsolidation: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalEvent, setModalEvent] = useState<ConsolidatedEvent | null>(null);
 
   useEffect(() => {
     loadEvents();
@@ -150,6 +153,28 @@ const EventsConsolidation: React.FC = () => {
     if (event.jantar) total += 70 * pessoas;
     if (event.cerimonial) total += 990;
     return total;
+  };
+
+  const handleApproveClick = (event: ConsolidatedEvent) => {
+    setModalEvent(event);
+    setModalOpen(true);
+  };
+
+  const handleModalChange = (field: keyof ApiEventData, value: any) => {
+    if (!modalEvent) return;
+    setModalEvent({ ...modalEvent, [field]: value });
+  };
+
+  const handleModalSubmit = async () => {
+    if (!modalEvent?.id) return;
+    try {
+      await apiService.updateEvent(modalEvent.id, { ...modalEvent, aprovado: true });
+      setModalOpen(false);
+      setModalEvent(null);
+      loadEvents();
+    } catch {
+      alert('Erro ao aprovar evento');
+    }
   };
 
   return (
@@ -290,18 +315,7 @@ const EventsConsolidation: React.FC = () => {
                   ) : (
                     <button
                       className="approve-btn"
-                      onClick={async () => {
-                        if (event.id === undefined) {
-                          alert('ID do evento não encontrado.');
-                          return;
-                        }
-                        try {
-                          await apiService.updateEvent(event.id, { aprovado: true });
-                          loadEvents();
-                        } catch (err) {
-                          alert('Erro ao aprovar evento');
-                        }
-                      }}
+                      onClick={() => handleApproveClick(event)}
                     >
                       Aprovar
                     </button>
@@ -312,6 +326,92 @@ const EventsConsolidation: React.FC = () => {
           </div>
         )}
       </div>
+
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={() => setModalOpen(false)}
+        contentLabel="Aprovar Evento"
+        ariaHideApp={false}
+        className="modal"
+        overlayClassName="modal-overlay"
+      >
+        {modalEvent && (
+          <div>
+            <h2>Aprovar Evento</h2>
+            <label>
+              Nome do Evento:
+              <input
+                value={modalEvent.nome}
+                onChange={e => handleModalChange('nome', e.target.value)}
+              />
+            </label>
+            <label>
+              Unidade Responsável:
+              <input
+                value={modalEvent.unidade_responsavel}
+                onChange={e => handleModalChange('unidade_responsavel', e.target.value)}
+              />
+            </label>
+            <label>
+              Mês:
+              <input
+                value={modalEvent.mes_previsto}
+                onChange={e => handleModalChange('mes_previsto', e.target.value)}
+              />
+            </label>
+            <label>
+              Pessoas:
+              <input
+                type="number"
+                value={modalEvent.quantidade_pessoas}
+                onChange={e => handleModalChange('quantidade_pessoas', Number(e.target.value))}
+              />
+            </label>
+            <label>
+              Coffee Break Manhã:
+              <input
+                type="checkbox"
+                checked={modalEvent.coffee_break_manha}
+                onChange={e => handleModalChange('coffee_break_manha', e.target.checked)}
+              />
+            </label>
+            <label>
+              Coffee Break Tarde:
+              <input
+                type="checkbox"
+                checked={modalEvent.coffee_break_tarde}
+                onChange={e => handleModalChange('coffee_break_tarde', e.target.checked)}
+              />
+            </label>
+            <label>
+              Almoço:
+              <input
+                type="checkbox"
+                checked={modalEvent.almoco}
+                onChange={e => handleModalChange('almoco', e.target.checked)}
+              />
+            </label>
+            <label>
+              Jantar:
+              <input
+                type="checkbox"
+                checked={modalEvent.jantar}
+                onChange={e => handleModalChange('jantar', e.target.checked)}
+              />
+            </label>
+            <label>
+              Cerimonial:
+              <input
+                type="checkbox"
+                checked={modalEvent.cerimonial}
+                onChange={e => handleModalChange('cerimonial', e.target.checked)}
+              />
+            </label>
+            <button onClick={handleModalSubmit}>Aprovar</button>
+            <button onClick={() => setModalOpen(false)}>Cancelar</button>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

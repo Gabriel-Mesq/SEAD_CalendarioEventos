@@ -75,6 +75,113 @@ h2, h3 {
   color: #21ba45;
 }
 
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal content */
+.modal {
+  background: #fff;
+  padding: 2.5rem 2.5rem;
+  border-radius: 16px;
+  min-width: 400px;         /* Aumenta a largura mínima */
+  max-width: 540px;         /* Limita a largura máxima */
+  width: 100%;              /* Garante responsividade */
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  color: #222;
+  z-index: 1001;
+}
+
+.modal h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.modal label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.modal input[type="text"],
+.modal input[type="number"],
+.modal input:not([type]),
+.modal textarea {
+  margin-top: 0.4rem;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 1.08rem;
+  font-family: inherit;
+  background: #f3f7f9;
+  box-shadow: 0 1px 4px rgba(33,186,69,0.04);
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.modal input[type="text"]:focus,
+.modal input[type="number"]:focus,
+.modal input:not([type]):focus,
+.modal textarea:focus {
+  border-color: #21ba45;
+  box-shadow: 0 0 0 2px #b6e6c9;
+  outline: none;
+  background: #f0fff4;
+}
+
+.modal label {
+  font-size: 1.07rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #222;
+}
+
+.modal input[type="checkbox"] {
+  margin-top: 0.6rem;
+  accent-color: #21ba45;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(33,186,69,0.04);
+}
+
+.modal button {
+  margin-top: 1.5rem;
+  margin-right: 0.7rem;
+  padding: 0.7rem 1.6rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #21ba45 60%, #16a34a 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(33,186,69,0.08);
+  transition: background 0.2s;
+}
+
+.modal button:last-child {
+  background: #e5e7eb;
+  color: #222;
+  font-weight: 500;
+}
+
+.modal button:hover {
+  filter: brightness(0.95);
+}
+
 @media (max-width: 700px) {
   .contract-summary {
     flex-direction: column;
@@ -82,5 +189,13 @@ h2, h3 {
   }
   .contract-execution-section {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal {
+    padding: 1.2rem 0.5rem;
+    min-width: 90vw;
+    max-width: 98vw;
   }
 }
