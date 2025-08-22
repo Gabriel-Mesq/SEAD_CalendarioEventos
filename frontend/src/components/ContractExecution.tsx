@@ -71,7 +71,7 @@ const ContractExecution: React.FC<ContractExecutionProps> = ({
           <span>R$ {contractTotal.toLocaleString('pt-BR')}</span>
         </div>
         <div>
-          <strong>Consumo Total:</strong>
+          <strong>Consumo Solicitado:</strong>
           <span>R$ {totalConsumed.toLocaleString('pt-BR')}</span>
         </div>
         <div>
