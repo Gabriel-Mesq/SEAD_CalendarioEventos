@@ -132,7 +132,7 @@ const EventCalendarForm: React.FC = () => {
       // Preparar dados para envio ao backend FastAPI
       const dataToSubmit = {
         nome_unidade: formData.nomeUnidade,
-        nome_solicitante: formData.nomeSolicitante, // Incluir nome do solicitante
+        nome_solicitante: formData.nomeSolicitante,
         eventos: formData.months
           .filter(month => month.hasEvents && month.events.length > 0)
           .flatMap(month => 
@@ -146,7 +146,8 @@ const EventCalendarForm: React.FC = () => {
               almoco: event.almoco,
               jantar: event.jantar,
               cerimonial: event.cerimonial,
-              nome_solicitante: event.nomeSolicitante // Incluir em cada evento
+              nome_solicitante: event.nomeSolicitante,
+              aprovado: false
             }))
           )
       };
