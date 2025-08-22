@@ -30,13 +30,21 @@ const ContractExecution: React.FC<ContractExecutionProps> = ({
 }) => {
   // Consumo acumulado mês a mês
   let saldo = contractTotal;
+  let saldoAprovado = contractTotal;
   const chartData = monthOrder.map(month => {
     const monthEvents = events.filter(e => e.mes_previsto === month);
     const consumed = monthEvents.reduce((sum, e) => sum + calcularCustoEstimado(e), 0);
+
+    const monthApprovedEvents = monthEvents.filter(e => e.aprovado);
+    const approvedConsumed = monthApprovedEvents.reduce((sum, e) => sum + calcularCustoEstimado(e), 0);
+
     saldo -= consumed;
+    saldoAprovado -= approvedConsumed;
+
     return {
       month,
-      saldo 
+      saldo,
+      saldoAprovado
     };
   });
 
@@ -49,6 +57,10 @@ const ContractExecution: React.FC<ContractExecutionProps> = ({
 
   const totalConsumed = consumptions.reduce((sum, m) => sum + m.consumed, 0);
   const contractBalance = contractTotal - totalConsumed;
+
+  const approvedEvents = events.filter(e => e.aprovado);
+  const approvedConsumed = approvedEvents.reduce((sum, e) => sum + calcularCustoEstimado(e), 0);
+  const approvedBalance = contractTotal - approvedConsumed;
 
   return (
     <div className="contract-execution-section">
@@ -66,6 +78,14 @@ const ContractExecution: React.FC<ContractExecutionProps> = ({
           <strong>Saldo Restante do Contrato:</strong>
           <span>R$ {contractBalance.toLocaleString('pt-BR')}</span>
         </div>
+        <div className="highlight-green">
+          <strong>Consumo Aprovado:</strong>
+          <span>R$ {approvedConsumed.toLocaleString('pt-BR')}</span>
+        </div>
+        <div className="highlight-green">
+          <strong>Saldo Restante Aprovado:</strong>
+          <span>R$ {approvedBalance.toLocaleString('pt-BR')}</span>
+        </div>
       </div>
       <h3>Saldo do Contrato Mês a Mês</h3>
       <ResponsiveContainer width="100%" height={300}>
@@ -74,7 +94,8 @@ const ContractExecution: React.FC<ContractExecutionProps> = ({
           <XAxis dataKey="month" />
           <YAxis />
           <Tooltip formatter={(value: number) => `R$ ${value.toLocaleString('pt-BR')}`} />
-          <Bar dataKey="saldo" fill="#8884d8" />
+          <Bar dataKey="saldo" fill="#8884d8" name="Saldo Geral" />
+          <Bar dataKey="saldoAprovado" fill="#21ba45" name="Saldo Aprovado" />
         </BarChart>
       </ResponsiveContainer>
       <h3>Consumo Mês a Mês</h3>

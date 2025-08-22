@@ -15,7 +15,8 @@ export interface ApiEventData {
   almoco: boolean;
   jantar: boolean;
   cerimonial: boolean;
-  nome_solicitante: string; // Novo campo
+  nome_solicitante: string; 
+  aprovado: boolean;
 }
 
 export interface ApiFormData {
@@ -114,6 +115,13 @@ class ApiService {
 
   async getEventById(id: string): Promise<ApiResponse<ApiEventData>> {
     return this.request(`/eventos/${id}`);
+  }
+
+  async updateEvent(id: string | number, updateData: Partial<ApiEventData>): Promise<ApiResponse<any>> {
+    return this.request(`/eventos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+    });
   }
 
   // Método para testar conexão com o backend

@@ -59,6 +59,7 @@ class EventoBase(SQLModel):
     almoco: bool = Field(default=False)
     jantar: bool = Field(default=False)
     cerimonial: bool = Field(default=False)
+    aprovado: bool = Field(default=False)
 
 
 class Evento(EventoBase, table=True):
@@ -93,9 +94,8 @@ class EventoUpdate(SQLModel):
     almoco: Optional[bool] = None
     jantar: Optional[bool] = None
     cerimonial: Optional[bool] = None
+    aprovado: Optional[bool] = None
 
-
-# Schemas para receber dados do frontend (conforme api.ts)
 class EventoFormData(SQLModel):
     nome: str
     unidade_responsavel: str

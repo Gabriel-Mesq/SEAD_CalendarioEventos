@@ -66,6 +66,15 @@ h2, h3 {
   background: #f5f6fa;
 }
 
+.highlight-green {
+  background: #eafbe7;
+  border: 1px solid #b6e6c9;
+}
+
+.highlight-green span {
+  color: #21ba45;
+}
+
 @media (max-width: 700px) {
   .contract-summary {
     flex-direction: column;

@@ -263,6 +263,7 @@ const EventsConsolidation: React.FC = () => {
               <div>Pessoas</div>
               <div>Serviços</div>
               <div>Preço Estimado</div>
+              <div>Aprovado</div> 
             </div>
             
             {filteredEvents.map((event, index) => (
@@ -282,6 +283,29 @@ const EventsConsolidation: React.FC = () => {
                 </div>
                 <div className="event-price">
                   R$ {calcularCustoEstimado(event).toLocaleString('pt-BR')}
+                </div>
+                <div className="event-aprovado">
+                  {event.aprovado ? (
+                    <span style={{ color: 'green', fontWeight: 'bold' }}>Aprovado</span>
+                  ) : (
+                    <button
+                      className="approve-btn"
+                      onClick={async () => {
+                        if (event.id === undefined) {
+                          alert('ID do evento não encontrado.');
+                          return;
+                        }
+                        try {
+                          await apiService.updateEvent(event.id, { aprovado: true });
+                          loadEvents();
+                        } catch (err) {
+                          alert('Erro ao aprovar evento');
+                        }
+                      }}
+                    >
+                      Aprovar
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
