@@ -39,7 +39,7 @@ app.include_router(frotas.router)
 async def root():
     return {"message": "SEAD Calendario Eventos API is running"}
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health_check():
     return {"status": "healthy", "message": "API is running properly!"}
 
