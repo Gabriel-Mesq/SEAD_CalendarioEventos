@@ -160,27 +160,6 @@ async def update_evento(
             errors={"detail": str(e)}
         )
 
-
-@router.delete("/all", response_model=ApiResponse)
-async def delete_all_eventos(session: Session = Depends(get_session)):
-    """Deletar todos os eventos"""
-    try:
-        deleted = session.exec(select(Evento)).all()
-        for evento in deleted:
-            session.delete(evento)
-        session.commit()
-        return ApiResponse(
-            success=True,
-            message=f"{len(deleted)} eventos deletados com sucesso"
-        )
-    except Exception as e:
-        session.rollback()
-        return ApiResponse(
-            success=False,
-            message="Erro ao deletar todos os eventos",
-            errors={"detail": str(e)}
-        )
-
 @router.delete("/{evento_id}", response_model=ApiResponse)
 async def delete_evento(evento_id: int, session: Session = Depends(get_session)):
     """Deletar evento"""
@@ -189,12 +168,14 @@ async def delete_evento(evento_id: int, session: Session = Depends(get_session))
         raise HTTPException(status_code=404, detail="Evento não encontrado")
     
     try:
+        evento_json = evento.model_dump()  
         session.delete(evento)
         session.commit()
         
         return ApiResponse(
             success=True,
-            message="Evento deletado com sucesso"
+            message=f"Evento deletado com sucesso: {evento.nome}",
+            data={"evento": evento_json}
         )
     except Exception as e:
         session.rollback()
