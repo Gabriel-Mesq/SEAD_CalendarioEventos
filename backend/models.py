@@ -1,7 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
 from enum import Enum
+from zoneinfo import ZoneInfo
+
+
+def brasilia_now():
+    # GMT-3 = UTC-3
+    return datetime.now(timezone(timedelta(hours=-3)))
 
 
 class MonthEnum(str, Enum):
@@ -51,7 +57,7 @@ class UnidadeUpdate(SQLModel):
 class EventoBase(SQLModel):
     nome: str = Field(max_length=255)
     unidade_responsavel: str = Field(max_length=255)
-    nome_solicitante: str = Field(max_length=255)  # Novo campo
+    nome_solicitante: str = Field(max_length=255) 
     quantidade_pessoas: int
     mes_previsto: MonthEnum
     coffee_break_manha: bool = Field(default=False)
@@ -60,7 +66,6 @@ class EventoBase(SQLModel):
     jantar: bool = Field(default=False)
     cerimonial: bool = Field(default=False)
     aprovado: bool = Field(default=False)
-
 
 class Evento(EventoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -71,6 +76,17 @@ class Evento(EventoBase, table=True):
     # Relacionamento com unidade
     unidade: Optional[Unidade] = Relationship(back_populates="eventos")
 
+class EventoAprovado(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    evento_id: int = Field(foreign_key="evento.id")
+    nome: str = Field(max_length=255)  
+    quantidade_pessoas: int
+    coffee_break_manha: bool
+    coffee_break_tarde: bool
+    almoco: bool
+    jantar: bool
+    cerimonial: bool
+    aprovado_at: datetime = Field(default_factory=brasilia_now)
 
 class EventoCreate(EventoBase):
     unidade_id: Optional[int] = None

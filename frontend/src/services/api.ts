@@ -32,6 +32,17 @@ export interface ApiResponse<T> {
   errors?: Record<string, string[]>;
 }
 
+export interface ApiApprovedEventData {
+  evento_id: number;
+  nome: string;
+  quantidade_pessoas: number;
+  coffee_break_manha: boolean;
+  coffee_break_tarde: boolean;
+  almoco: boolean;
+  jantar: boolean;
+  cerimonial: boolean;
+}
+
 class ApiService {
   async request<T>(
     endpoint: string, 
@@ -121,6 +132,13 @@ class ApiService {
     return this.request(`/eventos/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updateData),
+    });
+  }
+
+  async createApprovedEvent(data: ApiApprovedEventData): Promise<ApiResponse<any>> {
+    return this.request('/eventos/aprovados', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   }
 

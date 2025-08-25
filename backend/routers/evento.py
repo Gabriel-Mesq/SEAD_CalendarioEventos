@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlmodel import Session, select
 from datetime import datetime
 import csv
@@ -10,7 +10,7 @@ from db import get_session
 from models import (
     Evento, EventoCreate, EventoRead, EventoUpdate, EventoWithUnidade,
     FormSubmissionData, EventoFormData, MonthEnum, ApiResponse, EventoStats,
-    Unidade
+    Unidade, EventoAprovado
 )
 
 router = APIRouter(prefix="/api/eventos", tags=["eventos"])
@@ -85,17 +85,30 @@ async def submit_form(form_data: FormSubmissionData, session: Session = Depends(
 
 @router.get("", response_model=List[EventoWithUnidade])
 async def get_eventos(session: Session = Depends(get_session)):
-    """Listar todos os eventos com informações da unidade"""
-    statement = select(Evento)
-    eventos = session.exec(statement).all()
-    
+    """Listar todos os eventos com informações da unidade e dados aprovados se existirem"""
+    eventos = session.exec(select(Evento)).all()
     eventos_with_unidade = []
     for evento in eventos:
         evento_dict = evento.model_dump()
+        # Busca dados aprovados
+        aprovado = session.exec(
+            select(EventoAprovado).where(EventoAprovado.evento_id == evento.id)
+        ).first()
+        if aprovado:
+            # Sobrescreve campos aprovados
+            evento_dict.update({
+                "nome": aprovado.nome,
+                "quantidade_pessoas": aprovado.quantidade_pessoas,
+                "coffee_break_manha": aprovado.coffee_break_manha,
+                "coffee_break_tarde": aprovado.coffee_break_tarde,
+                "almoco": aprovado.almoco,
+                "jantar": aprovado.jantar,
+                "cerimonial": aprovado.cerimonial,
+                "aprovado": True
+            })
         if evento.unidade:
             evento_dict["unidade"] = evento.unidade.model_dump()
         eventos_with_unidade.append(EventoWithUnidade(**evento_dict))
-    
     return eventos_with_unidade
 
 
@@ -276,3 +289,44 @@ async def export_eventos_csv(session: Session = Depends(get_session)):
         ])
     output.seek(0)
     return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=eventos.csv"})
+
+
+@router.post("/aprovados", response_model=ApiResponse)
+async def create_evento_aprovado(
+    data: dict = Body(...),
+    session: Session = Depends(get_session)
+):
+    """Criar registro de evento aprovado"""
+    try:
+        evento_id = data.get("evento_id")
+        evento = session.get(Evento, evento_id)
+        if not evento:
+            raise HTTPException(status_code=404, detail="Evento não encontrado")
+
+        aprovado = EventoAprovado(
+            evento_id=evento_id,
+            nome=data.get("nome", evento.nome),
+            quantidade_pessoas=data.get("quantidade_pessoas", evento.quantidade_pessoas),
+            coffee_break_manha=data.get("coffee_break_manha", evento.coffee_break_manha),
+            coffee_break_tarde=data.get("coffee_break_tarde", evento.coffee_break_tarde),
+            almoco=data.get("almoco", evento.almoco),
+            jantar=data.get("jantar", evento.jantar),
+            cerimonial=data.get("cerimonial", evento.cerimonial)
+        )
+        session.add(aprovado)
+        session.commit()
+        session.refresh(aprovado)
+        return ApiResponse(
+            success=True,
+            message="Evento aprovado registrado com sucesso",
+            data={"evento_aprovado_id": aprovado.id}
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        session.rollback()
+        return ApiResponse(
+            success=False,
+            message="Erro ao aprovar evento",
+            errors={"detail": str(e)}
+        )

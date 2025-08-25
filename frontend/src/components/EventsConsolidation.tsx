@@ -168,7 +168,16 @@ const EventsConsolidation: React.FC = () => {
   const handleModalSubmit = async () => {
     if (!modalEvent?.id) return;
     try {
-      await apiService.updateEvent(modalEvent.id, { ...modalEvent, aprovado: true });
+      await apiService.createApprovedEvent({
+        evento_id: Number(modalEvent.id),
+        nome: modalEvent.nome,
+        quantidade_pessoas: modalEvent.quantidade_pessoas,
+        coffee_break_manha: modalEvent.coffee_break_manha,
+        coffee_break_tarde: modalEvent.coffee_break_tarde,
+        almoco: modalEvent.almoco,
+        jantar: modalEvent.jantar,
+        cerimonial: modalEvent.cerimonial,
+      });
       setModalOpen(false);
       setModalEvent(null);
       loadEvents();
